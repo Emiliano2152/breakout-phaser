@@ -4,6 +4,7 @@ export class Player extends Phaser.GameObjects.Rectangle {
   body: Phaser.Physics.Arcade.Body;
 
   private cursors: Phaser.Types.Input.Keyboard.CursorKeys;
+  private readonly MAX_SPEED: number = 300;
 
   constructor(params: RectangleConstructor) {
     super(
@@ -33,6 +34,7 @@ export class Player extends Phaser.GameObjects.Rectangle {
   }
 
   private initInput(): void {
+    // Keyboard input
     this.cursors = this.scene.input.keyboard.createCursorKeys();
   }
 
@@ -41,13 +43,39 @@ export class Player extends Phaser.GameObjects.Rectangle {
   }
 
   private handleInput(): void {
+    // Pointer input takes priority when pointer is down
+    if (this.scene.input.activePointer.isDown) {
+      this.handlePointerInput();
+    } else {
+      // Fall back to keyboard input
+      this.handleKeyboardInput();
+    }
+  }
+
+  private handlePointerInput(): void {
+    // Directly set paddle to pointer X position
+    const pointer = this.scene.input.activePointer;
+    const targetX = pointer.x;
+
+    // Calculate velocity based on movement
+    let velocity = (targetX - this.x) * 60; // Convert position change to velocity
+
+    // Clamp velocity to MAX_SPEED
+    velocity = Phaser.Math.Clamp(velocity, -this.MAX_SPEED, this.MAX_SPEED);
+    this.body.setVelocityX(velocity);
+  }
+
+  private handleKeyboardInput(): void {
     let velocity = 0;
     if (this.cursors.right.isDown) {
-      velocity += 300;
-    } 
-    if (this.cursors.left.isDown) {
-      velocity -= 300;
+      velocity += this.MAX_SPEED;
     }
+    if (this.cursors.left.isDown) {
+      velocity -= this.MAX_SPEED;
+    }
+
+    // Clamp velocity to MAX_SPEED
+    velocity = Phaser.Math.Clamp(velocity, -this.MAX_SPEED, this.MAX_SPEED);
     this.body.setVelocityX(velocity);
   }
 
