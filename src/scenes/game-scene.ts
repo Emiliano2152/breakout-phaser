@@ -35,6 +35,12 @@ export class GameScene extends Phaser.Scene {
     const BRICKS = settings.LEVELS[settings.currentLevel].BRICKS;
     const WIDTH = settings.LEVELS[settings.currentLevel].WIDTH;
     const HEIGHT = settings.LEVELS[settings.currentLevel].HEIGHT;
+
+    // blocksTopY es la coordenada `y` del limite superior de los bloques
+    const blocksTopY =
+      (+this.game.config.height -
+        (settings.BRICK.HEIGHT + settings.BRICK.SPACING) * HEIGHT) /
+      2;
     for (let y = 0; y < HEIGHT; y++) {
       for (let x = 0; x < WIDTH; x++) {
         this.bricks.add(
@@ -42,8 +48,7 @@ export class GameScene extends Phaser.Scene {
             scene: this,
             x: (settings.BRICK.WIDTH + settings.BRICK.SPACING) * x,
             y:
-              settings.BRICK.MARGIN_TOP +
-              y * (settings.BRICK.HEIGHT + settings.BRICK.SPACING),
+              blocksTopY + y * (settings.BRICK.HEIGHT + settings.BRICK.SPACING),
             width: settings.BRICK.WIDTH,
             height: settings.BRICK.HEIGHT,
             fillColor: BRICK_COLORS[BRICKS[y * 14 + x]]
@@ -60,6 +65,14 @@ export class GameScene extends Phaser.Scene {
       width: 50,
       height: 10
     });
+
+    /* this.player2 = new Player({
+      scene: this,
+      x: 0,
+      y: +this.game.config.height - 50,
+      width: 50,
+      height: 10
+    });*/
 
     // ball
     this.ball = new Ball({ scene: this, x: 0, y: 0 }).setVisible(false);

@@ -5,6 +5,8 @@ export class Player extends Phaser.GameObjects.Rectangle {
 
   private cursors: Phaser.Types.Input.Keyboard.CursorKeys;
   private readonly MAX_SPEED: number = 300;
+  private xInicio: number;
+  private yInicio: number;
 
   constructor(params: RectangleConstructor) {
     super(
@@ -16,7 +18,8 @@ export class Player extends Phaser.GameObjects.Rectangle {
       params.fillColor,
       params.fillAlpha
     );
-
+    this.xInicio = params.x;
+    this.yInicio = params.y;
     this.initRectangle();
     this.initPhysics();
     this.initInput();
@@ -80,7 +83,7 @@ export class Player extends Phaser.GameObjects.Rectangle {
   }
 
   public resetToStartPosition(): void {
-    this.x = +this.scene.game.config.width / 2 - 20;
-    this.y = +this.scene.game.config.height - 50;
+    this.x = this.xInicio;
+    this.y = this.yInicio;
   }
 }
