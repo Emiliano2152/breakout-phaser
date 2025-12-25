@@ -1,6 +1,6 @@
 import { RectangleConstructor } from '../interfaces/interfaces';
 
-export class Player extends Phaser.GameObjects.Rectangle {
+export class Player2 extends Phaser.GameObjects.Rectangle {
   body: Phaser.Physics.Arcade.Body;
 
   private cursors: Phaser.Types.Input.Keyboard.CursorKeys;
@@ -72,10 +72,11 @@ export class Player extends Phaser.GameObjects.Rectangle {
 
   private handleKeyboardInput(): void {
     let velocity = 0;
-    if (this.cursors.right.isDown) {
+    if (this.cursors.left.isDown) {
+      //Invierto la logica para que el player2 se mueva con las flechas derecha e izquierda
       velocity += this.MAX_SPEED;
     }
-    if (this.cursors.left.isDown) {
+    if (this.cursors.right.isDown) {
       velocity -= this.MAX_SPEED;
     }
 

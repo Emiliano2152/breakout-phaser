@@ -1,6 +1,7 @@
 import { Ball } from '../objects/ball';
 import { Brick } from '../objects/brick';
 import { Player } from '../objects/player';
+import { Player2 } from '../objects/player2'; //Agregue la importacion del player2
 import { settings } from '../settings';
 
 const BRICK_COLORS: number[] = [0xf2e49b, 0xbed996, 0xf2937e, 0xffffff];
@@ -9,6 +10,7 @@ export class GameScene extends Phaser.Scene {
   private ball: Ball;
   private bricks: Phaser.GameObjects.Group;
   private player: Player;
+  private player2: Player2; // Agregue un nuevo player2
   private scoreText: Phaser.GameObjects.BitmapText;
   private highScoreText: Phaser.GameObjects.BitmapText;
   private livesText: Phaser.GameObjects.BitmapText;
@@ -60,19 +62,19 @@ export class GameScene extends Phaser.Scene {
     // player
     this.player = new Player({
       scene: this,
-      x: +this.game.config.width / 2 - 20,
+      x: +this.game.config.width / 2, //Modifique la posicion inicial del player para que este en el centro
       y: +this.game.config.height - 50,
       width: 50,
       height: 10
     });
 
-    /* this.player2 = new Player({
+    this.player2 = new Player2({
       scene: this,
-      x: 0,
-      y: +this.game.config.height - 50,
+      x: +this.game.config.width / 2,
+      y: 60,
       width: 50,
       height: 10
-    });*/
+    }); // Le di la posicion inicial al player2 dejando lugar para el score arriba
 
     // ball
     this.ball = new Ball({ scene: this, x: 0, y: 0 }).setVisible(false);
@@ -105,6 +107,7 @@ export class GameScene extends Phaser.Scene {
     // collisions
     // ----------
     this.physics.add.collider(this.player, this.ball);
+    this.physics.add.collider(this.player2, this.ball); // Agregue la colision entre el player2 y la pelota
     this.physics.add.collider(
       this.ball,
       this.bricks,
@@ -125,6 +128,7 @@ export class GameScene extends Phaser.Scene {
 
   update(): void {
     this.player.update();
+    this.player2.update(); // Actualizo el player2 en el update de la escena
 
     if (this.player.body.velocity.x !== 0 && !this.ball.visible) {
       this.ball.setPosition(this.player.x, this.player.y - 200);
@@ -132,18 +136,26 @@ export class GameScene extends Phaser.Scene {
       this.ball.setVisible(true);
     }
 
-    if (<number>this.ball.y > <number>this.game.config.height) {
-      settings.lives -= 1;
-      this.events.emit('livesChanged');
+    if (
+      this.ball.visible && // Le agrege la condicion de visibilidad de la pelota porque si no se reiniciaba en un lugado donde (<number>this.ball.y < 50) me hacia perder una vida y entraba en un bucle de perdidas de vida hasta que moviera el player nuevamente.
+      (<number>this.ball.y > <number>this.game.config.height ||
+        <number>this.ball.y < 50) // Modifique la condicion para que el limite inferior siga siendo el height del juego pero el limite superior sea 50.
+    ) {
+      {
+        settings.lives -= 1;
+        this.events.emit('livesChanged');
 
-      if (settings.lives === 0) {
-        this.gameOver();
-      } else {
-        this.player.body.setVelocity(0);
-        this.player.resetToStartPosition();
-        this.ball.setPosition(0, 0);
-        this.ball.body.setVelocity(0);
-        this.ball.setVisible(false);
+        if (settings.lives === 0) {
+          this.gameOver();
+        } else {
+          this.player.body.setVelocity(0);
+          this.player.resetToStartPosition();
+          this.player2.body.setVelocity(0); // Reinicio la velocidad del player2
+          this.player2.resetToStartPosition(); // Reinicio la posicion del player2
+          this.ball.setPosition(0, 0);
+          this.ball.body.setVelocity(0);
+          this.ball.setVisible(false);
+        }
       }
     }
   }
