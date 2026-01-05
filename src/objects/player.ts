@@ -1,5 +1,10 @@
 import { RectangleConstructor } from '../interfaces/interfaces';
 
+export const playerDirection = {
+  NORMAL: 1,
+  INVERTED: -1
+};
+
 export class Player extends Phaser.GameObjects.Rectangle {
   body: Phaser.Physics.Arcade.Body;
 
@@ -7,8 +12,10 @@ export class Player extends Phaser.GameObjects.Rectangle {
   private readonly MAX_SPEED: number = 300;
   private xInicio: number;
   private yInicio: number;
+  private directionMultiplier: number;
 
-  constructor(params: RectangleConstructor) {
+  constructor(params: RectangleConstructor & { directionMultiplier?: number }) {
+    // Agrego directionMultiplier opcional con el signo de interrogacion para que no sea obligatorio
     super(
       params.scene,
       params.x,
@@ -24,6 +31,7 @@ export class Player extends Phaser.GameObjects.Rectangle {
     this.initPhysics();
     this.initInput();
     this.scene.add.existing(this);
+    this.directionMultiplier = params.directionMultiplier ?? 1; // Asigno el valor de directionMultiplier o 1 si no esta definido
   }
 
   private initRectangle(): void {
@@ -73,10 +81,10 @@ export class Player extends Phaser.GameObjects.Rectangle {
   private handleKeyboardInput(): void {
     let velocity = 0;
     if (this.cursors.right.isDown) {
-      velocity += this.MAX_SPEED;
+      velocity += this.MAX_SPEED * this.directionMultiplier; // Multiplico la velocidad por el directionMultiplier, si no esta definido uso 1
     }
     if (this.cursors.left.isDown) {
-      velocity -= this.MAX_SPEED;
+      velocity -= this.MAX_SPEED * this.directionMultiplier;
     }
 
     // Clamp velocity to MAX_SPEED

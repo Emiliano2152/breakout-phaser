@@ -1,8 +1,8 @@
 import { Ball } from '../objects/ball';
 import { Brick } from '../objects/brick';
 import { Player } from '../objects/player';
-import { Player2 } from '../objects/player2'; //Agregue la importacion del player2
 import { settings } from '../settings';
+import { playerDirection } from '../objects/player'; // Importo playerDirection
 
 const BRICK_COLORS: number[] = [0xf2e49b, 0xbed996, 0xf2937e, 0xffffff];
 
@@ -10,7 +10,7 @@ export class GameScene extends Phaser.Scene {
   private ball: Ball;
   private bricks: Phaser.GameObjects.Group;
   private player: Player;
-  private player2: Player2; // Agregue un nuevo player2
+  private player2: Player;
   private scoreText: Phaser.GameObjects.BitmapText;
   private highScoreText: Phaser.GameObjects.BitmapText;
   private livesText: Phaser.GameObjects.BitmapText;
@@ -65,16 +65,18 @@ export class GameScene extends Phaser.Scene {
       x: +this.game.config.width / 2, //Modifique la posicion inicial del player para que este en el centro
       y: +this.game.config.height - 50,
       width: 50,
-      height: 10
+      height: 10,
+      directionMultiplier: playerDirection.NORMAL // Le paso el directionMultiplier.NORMAL para que se mueva en sentido normal
     });
 
-    this.player2 = new Player2({
+    this.player2 = new Player({
       scene: this,
       x: +this.game.config.width / 2,
-      y: 60,
+      y: 60, // Le di la posicion inicial al player2 dejando lugar para el score arriba
       width: 50,
-      height: 10
-    }); // Le di la posicion inicial al player2 dejando lugar para el score arriba
+      height: 10,
+      directionMultiplier: playerDirection.INVERTED // Le paso el directionMultiplier.INVERTED para que se mueva en sentido invertido (-1)
+    });
 
     // ball
     this.ball = new Ball({ scene: this, x: 0, y: 0 }).setVisible(false);
