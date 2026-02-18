@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Mi primer front</title>
+    <div id="datos">Hola soy Emi</div>
+    <div id="otroid">Hola soy Emi</div>
+  </head>
+  <body>
+    <script>
+      let main = async () => {
+        // Obtenemos el div en javascript
+        let elementoDivDatos = document.getElementById('datos');
+        let response = await fetch('http://localhost:3223/ping');
+        let data = await response.text();
+
+        console.log(elementoDivDatos.textContent);
+        elementoDivDatos.textContent = data;
+        elementoDivDatos.style.color = 'red';
+      };
+
+      main();
+    </script>
+  </body>
+</html>
