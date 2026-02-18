@@ -1,16 +1,17 @@
 import { Ball } from '../objects/ball';
 import { Brick } from '../objects/brick';
-import { Player } from '../objects/player';
+import { Player, PlayerDirection, PlayerAxis } from '../objects/player';
 import { settings } from '../settings';
-import { playerDirection } from '../objects/player'; // Importo playerDirection
 
 const BRICK_COLORS: number[] = [0xf2e49b, 0xbed996, 0xf2937e, 0xffffff];
 
 export class GameScene extends Phaser.Scene {
   private ball: Ball;
   private bricks: Phaser.GameObjects.Group;
+  // TODO usar un array para los players
   private player: Player;
   private player2: Player;
+  private player3: Player;
   private scoreText: Phaser.GameObjects.BitmapText;
   private highScoreText: Phaser.GameObjects.BitmapText;
   private livesText: Phaser.GameObjects.BitmapText;
@@ -66,7 +67,7 @@ export class GameScene extends Phaser.Scene {
       y: +this.game.config.height - 50,
       width: 50,
       height: 10,
-      directionMultiplier: playerDirection.NORMAL // Le paso el directionMultiplier.NORMAL para que se mueva en sentido normal
+      directionMultiplier: PlayerDirection.NORMAL // Le paso el directionMultiplier.NORMAL para que se mueva en sentido normal
     });
 
     this.player2 = new Player({
@@ -75,7 +76,15 @@ export class GameScene extends Phaser.Scene {
       y: 60, // Le di la posicion inicial al player2 dejando lugar para el score arriba
       width: 50,
       height: 10,
-      directionMultiplier: playerDirection.INVERTED // Le paso el directionMultiplier.INVERTED para que se mueva en sentido invertido (-1)
+      directionMultiplier: PlayerDirection.INVERTED // Le paso el directionMultiplier.INVERTED para que se mueva en sentido invertido (-1)
+    });
+
+    this.player3 = new Player({
+      scene: this,
+      x: +this.game.config.width - 10,
+      y: +this.game.config.height - 40, // Le di la posicion inicial al player2 dejando lugar para el score arriba
+      width: 10,
+      height: 50
     });
 
     // ball
@@ -110,6 +119,8 @@ export class GameScene extends Phaser.Scene {
     // ----------
     this.physics.add.collider(this.player, this.ball);
     this.physics.add.collider(this.player2, this.ball); // Agregue la colision entre el player2 y la pelota
+    this.physics.add.collider(this.player3, this.ball); // Agregue la colision entre el player2 y la pelota
+
     this.physics.add.collider(
       this.ball,
       this.bricks,
@@ -131,6 +142,7 @@ export class GameScene extends Phaser.Scene {
   update(): void {
     this.player.update();
     this.player2.update(); // Actualizo el player2 en el update de la escena
+    this.player3.update();
 
     if (this.player.body.velocity.x !== 0 && !this.ball.visible) {
       this.ball.setPosition(this.player.x, this.player.y - 200);
@@ -154,6 +166,9 @@ export class GameScene extends Phaser.Scene {
           this.player.resetToStartPosition();
           this.player2.body.setVelocity(0); // Reinicio la velocidad del player2
           this.player2.resetToStartPosition(); // Reinicio la posicion del player2
+          this.player3.body.setVelocity(0); // Reinicio la velocidad del player2
+          this.player3.resetToStartPosition(); // Reinicio la posicion del player2
+
           this.ball.setPosition(0, 0);
           this.ball.body.setVelocity(0);
           this.ball.setVisible(false);

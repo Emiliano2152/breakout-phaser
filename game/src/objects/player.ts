@@ -1,10 +1,14 @@
 import { RectangleConstructor } from '../interfaces/interfaces';
 
-export const playerDirection = {
+export const PlayerDirection = {
   NORMAL: 1,
   INVERTED: -1
 };
 
+export const PlayerAxis = {
+  X: 'X',
+  Y: 'Y'
+};
 export class Player extends Phaser.GameObjects.Rectangle {
   body: Phaser.Physics.Arcade.Body;
 
@@ -89,7 +93,14 @@ export class Player extends Phaser.GameObjects.Rectangle {
 
     // Clamp velocity to MAX_SPEED
     velocity = Phaser.Math.Clamp(velocity, -this.MAX_SPEED, this.MAX_SPEED);
-    this.body.setVelocityX(velocity);
+
+    // TODO: usar `switch`
+    if (this.playerAxis == PlayerAxis.X) {
+      this.body.setVelocityX(velocity);
+    }
+    if (this.playerAxis == PlayerAxis.Y) {
+      this.body.setVelocityY(velocity);
+    }
   }
 
   public resetToStartPosition(): void {

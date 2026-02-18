@@ -22,6 +22,7 @@
     "webpack-dev-server": "5.2.0"
   },
   "dependencies": {
+    "express": "^5.2.1",
     "phaser": "4.0.0-rc.5"
   },
   "repository": {
